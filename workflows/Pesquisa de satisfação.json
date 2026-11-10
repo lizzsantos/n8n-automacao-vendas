@@ -1,0 +1,184 @@
+{
+  "name": "Pesquisa de satisfação",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "11y519kn-XujBpwk-K7e3POp6O7yxZ-5AYoMDysljpqM",
+          "mode": "list",
+          "cachedResultName": "Pesquisa de satifasção",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11y519kn-XujBpwk-K7e3POp6O7yxZ-5AYoMDysljpqM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1188402093,
+          "mode": "list",
+          "cachedResultName": "Respostas ao formulário 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11y519kn-XujBpwk-K7e3POp6O7yxZ-5AYoMDysljpqM/edit#gid=1188402093"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "63e6b996-8191-43cf-998e-46e720028603",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "ThojMYmOEvDnV6yo",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "1a0ef9d2-df8d-4452-9318-d472f5e6a650",
+              "leftValue": "={{ $json['Em uma escala de 0 a 10, quais as chances de você recomendar a nossa loja a familiares e amigos?'] }}",
+              "rightValue": 6,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "eee211f6-83f3-4dcd-8c50-984cc2ba2a80",
+      "name": "o cliente está insatisfeito?"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.5-flash",
+          "mode": "list",
+          "cachedResultName": "Gemini 3.5 Flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Me diga em uma palavra qual o problema que esse cliente teve. A mensagem que ele mandou foi a seguinte: \n\n {{ $json['Deixe um comentário'] }}\n\nEscolha uma dessas palavras:\n- Qualidade\n- Prazo\n- Defeito\n- Preço\n- Atendimento"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        -96
+      ],
+      "id": "6dfb74f1-172f-465c-806d-2ec8f6d5fcca",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "OR8fBx2gUALmHGPa",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "waxate2506@artegin.com",
+        "subject": "Cliente com problema",
+        "message": "=O cliente {{ $('o cliente está insatisfeito?').item.json['Endereço de e-mail'] }}, está com um problema de {{ $json.content.parts[0].text }}. A mensagem original é: {{ $('o cliente está insatisfeito?').item.json['Deixe um comentário'] }} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        -96
+      ],
+      "id": "5bc773db-7e89-43da-8d3a-f5a079e0418a",
+      "name": "Send a message",
+      "webhookId": "e7542fae-c4c4-4924-b4d5-0059d37a0fa0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "EkcQoEpioBCDfenB",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "o cliente está insatisfeito?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "o cliente está insatisfeito?": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "993dea73-c962-4c72-ba3a-c1a8261eb391",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "86537442eb10e55be8160c32da3d6b46dab93e6d8144d68577de348c7e572e07"
+  },
+  "nodeGroups": [],
+  "id": "HZ2XANVrZAOB7Yb9",
+  "tags": []
+}

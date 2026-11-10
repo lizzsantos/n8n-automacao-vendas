@@ -1,0 +1,112 @@
+{
+  "name": "Confirmação de entrega",
+  "nodes": [
+    {
+      "parameters": {
+        "sendTo": "=waxate2506@artegin.com",
+        "subject": "Pesquisa de satisfação",
+        "emailType": "text",
+        "message": "Vimos que você recebeu seu produto e queremos sua opnião! Quando tiver um tempo, por favor responda essa pesquisa. https://forms.gle/gE6NHutAgEEpBkvv9",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        128
+      ],
+      "id": "2a962ed9-50c1-4dc2-becc-ab87d6acffb4",
+      "name": "Envio da pesquisa",
+      "webhookId": "3f00eb1a-79d7-4362-8c5b-7dee42bb3049",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "EkcQoEpioBCDfenB",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "waxate2506@artegin.com",
+        "subject": "Confirmação da entrega",
+        "message": "=O pedido do cliente  {{ $('Start').item.json.Cliente }} foi entregue?",
+        "approvalOptions": {
+          "values": {}
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        768,
+        0
+      ],
+      "id": "42c45890-93fa-4bd0-a835-2919266f2390",
+      "name": "Confirmação do envio",
+      "webhookId": "7fe95820-b5ed-418f-809f-94ebd80cd309",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "EkcQoEpioBCDfenB",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "Cliente"
+            }
+          ]
+        }
+      },
+      "id": "7598e9e5-4381-4a3a-899f-728013c43cc7",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        560,
+        0
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Confirmação do envio": {
+      "main": [
+        [
+          {
+            "node": "Envio da pesquisa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Confirmação do envio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "168af87a-2c6b-4202-8450-634a1ac0daa3",
+  "meta": {
+    "instanceId": "86537442eb10e55be8160c32da3d6b46dab93e6d8144d68577de348c7e572e07"
+  },
+  "nodeGroups": [],
+  "id": "vQM8Nbw7S0MoXd9X",
+  "tags": []
+}

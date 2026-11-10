@@ -1,0 +1,333 @@
+{
+  "name": "Envio do pedido",
+  "nodes": [
+    {
+      "parameters": {
+        "sendTo": "waxate2506@artegin.com",
+        "subject": "Pedido enviado!",
+        "emailType": "text",
+        "message": "=O pedido do cliente {{ $json.Cliente }} foi enviado.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "b454f1d2-4f9d-47cb-b117-76da45723892",
+      "name": "Aviso do pedido enviado",
+      "webhookId": "f714707a-94b2-42cf-8904-566360758e19",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "EkcQoEpioBCDfenB",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        480,
+        -32
+      ],
+      "id": "3300faa0-c9be-489f-ab97-9d9768011d70",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "vQM8Nbw7S0MoXd9X",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/vQM8Nbw7S0MoXd9X",
+          "cachedResultName": "Time de Vendas — Confirmação de entrega"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Cliente": "={{ $('On form submission').item.json.Cliente }}"
+          },
+          "matchingColumns": [
+            "Cliente"
+          ],
+          "schema": [
+            {
+              "id": "Cliente",
+              "displayName": "Cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.4,
+      "position": [
+        912,
+        64
+      ],
+      "name": "Call Confirmação de entrega",
+      "id": "ac2937b2-91bc-44fe-a4a2-ee9b7c03fd6b"
+    },
+    {
+      "parameters": {
+        "formTitle": "Confirmação de envio",
+        "formDescription": "Form para o time de vendas avisar do envio de pedidos, para o time de pós-venda",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Cliente",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Contato do cliente"
+            },
+            {
+              "fieldLabel": "Email do cliente",
+              "fieldType": "email",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        -352,
+        -48
+      ],
+      "id": "f23e54ac-73e6-4d00-8d40-45fd84decf75",
+      "name": "On form submission",
+      "webhookId": "2eb70883-6449-4ac2-a85a-ddc172b42b37"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Ax_dxAdXZxHQKiJwbLLlCzBu_NUefUUSTKRggzzAes8",
+          "mode": "list",
+          "cachedResultName": "Handoff Vendas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ax_dxAdXZxHQKiJwbLLlCzBu_NUefUUSTKRggzzAes8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Handoff_Vendas_PosVendas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ax_dxAdXZxHQKiJwbLLlCzBu_NUefUUSTKRggzzAes8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Cliente": "={{ $json.Cliente }}",
+            "Contato do Cliente": "={{ $json['Contato do cliente'] }}",
+            "Email do Cliente": "={{ $json['Email do cliente'] }}",
+            "Data de Início": "={{ $json.submittedAt }}",
+            "Valor da Venda": "9999999",
+            "Produtos/Serviços Vendidos": "teste",
+            "Status do Pagamento": "pago"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Cliente",
+              "displayName": "Cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Contato do Cliente",
+              "displayName": "Contato do Cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email do Cliente",
+              "displayName": "Email do Cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telefone",
+              "displayName": "Telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Valor da Venda",
+              "displayName": "Valor da Venda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Produtos/Serviços Vendidos",
+              "displayName": "Produtos/Serviços Vendidos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Data de Início",
+              "displayName": "Data de Início",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status do Pagamento",
+              "displayName": "Status do Pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Observações de Vendas",
+              "displayName": "Observações de Vendas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Responsável Pós-Venda",
+              "displayName": "Responsável Pós-Venda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -32,
+        -48
+      ],
+      "id": "8a30c43d-2240-4a44-b45c-e74abd3a75e6",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "JNVrnvvPLOqzGQ3p",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Aviso do pedido enviado": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Call Confirmação de entrega",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Confirmação de entrega": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Aviso do pedido enviado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "53a2b9dc-9333-45cb-be7c-a5a2118b18bd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "86537442eb10e55be8160c32da3d6b46dab93e6d8144d68577de348c7e572e07"
+  },
+  "nodeGroups": [],
+  "id": "TR99oKpD2lCmX1sa",
+  "tags": []
+}
